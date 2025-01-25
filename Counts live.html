@@ -4,103 +4,146 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Subscriber Counter</title>
-    <!-- Preloads fonts and applies Roboto for a clean look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital@0;1&display=swap" rel="stylesheet">
-    <!-- Includes Odometer.js for animated number transitions -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/themes/odometer-theme-default.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/themes/odometer-theme-minimal.min.css">
     <style>
         body {
-            /* Centers content vertically and horizontally */
+            font-family: 'Roboto', serif;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            /* Sets the background color and font styling */
             height: 100vh;
             background-color: #000;
             color: #ffffff;
-            font-family: "Roboto", serif !important;
+            font-size: 14px;
         }
 
         #search-bar {
-            margin-bottom: 20px; /* Adds space below the search bar */
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"], button {
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
         }
 
         input[type="text"] {
-            /* Customizes the text input style */
-            padding: 10px;
-            font-size: 16px;
             width: 300px;
         }
 
         button {
-            /* Adds padding and ensures consistent button styling */
-            padding: 10px 20px;
-            font-size: 16px;
-            margin-left: 10px;
-            cursor: pointer; /* Changes the cursor to a pointer on hover */
+            background-color: #ff4747;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        #counter {
-            /* Large font size for the subscriber count display */
-            font-size: 20em;
+        button:hover {
+            background-color: #e63e3e;
+        }
+
+        #counter, #Bêta {
+            display: none;
+            font-size: 5em;
         }
 
         .odometer {
-            /* Styling specific to the odometer animation */
-            font-weight: 700;
-            margin: 20px 0;
+            font-size: 5em;
+        }
+
+        #Bêta {
+            margin-top: 20px;
+            font-size: 1.5em;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        body, #search-bar {
+            animation: fadeIn 1s ease-in-out;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
 </head>
 <body>
-    <!-- Search bar where users input the YouTube channel name -->
     <div id="search-bar">
         <input type="text" id="channel-input" placeholder="Enter YouTube channel name">
         <button onclick="fetchChannelData()">Search</button>
     </div>
 
-    <!-- Counter that displays the subscriber count -->
+    <div id="result-list"></div>
+
+    <div id="Bêta">
+        Caution! This site is in beta version
+    </div>
+
     <div id="counter"><span id="subscriber-count" class="odometer">0</span></div>
 
     <script>
-        let channelId; // Variable to store the ID of the selected YouTube channel
+        let channelId;
+        let intervalId;
 
-        // Fetches data about a YouTube channel based on user input
         async function fetchChannelData() {
             const channelName = document.getElementById('channel-input').value;
             if (!channelName) {
-                alert('Please enter a channel name.'); // Prompts the user to enter a channel name if none is provided
+                alert('Please enter a channel name.');
                 return;
             }
 
             try {
-                // Queries the YouTube API for the specified channel name
-                const response = await fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${channelName}&type=channel&key=YOUR-API`);
+                const response = await fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${channelName}&type=channel&maxResults=5&key=AIzaSyCoHpMK3xIsaX4l0GGq1JsKHbxATYq-HN0`);
                 const data = await response.json();
 
                 if (data.items.length === 0) {
-                    alert('Channel not found.'); // Alerts if no matching channel is found
+                    alert('Channel not found.');
                     return;
                 }
 
-                channelId = data.items[0].id.channelId; // Extracts the channel ID from the response
-                await fetchSubscriberData(); // Fetches subscriber data after obtaining the channel ID
-                setInterval(fetchSubscriberData, 2000); // Updates subscriber data every 2 seconds
+                displayChannelResults(data.items);
             } catch (error) {
                 console.error('Error fetching channel data:', error);
             }
         }
 
-        // Fetches subscriber count for the selected channel
+        function displayChannelResults(channels) {
+            const resultList = document.getElementById('result-list');
+            resultList.innerHTML = ''; // Clear previous results
+            channels.forEach(channel => {
+                const channelElement = document.createElement('div');
+                channelElement.textContent = channel.snippet.title;
+                channelElement.style.cursor = 'pointer';
+                channelElement.style.margin = '10px 0';
+                channelElement.onclick = () => {
+                    channelId = channel.id.channelId;
+                    fetchSubscriberData();
+                    document.getElementById('counter').style.display = 'block';
+                    document.getElementById('Bêta').style.display = 'block';
+                    resultList.innerHTML = ''; // Clear results after selection
+                    clearInterval(intervalId); // Clear any existing intervals
+                    intervalId = setInterval(fetchSubscriberData, 2000); // Set new interval for updating
+                };
+                resultList.appendChild(channelElement);
+            });
+        }
+
         async function fetchSubscriberData() {
             if (!channelId) return;
 
             try {
-                // Uses a third-party API to get real-time subscriber count
                 const response = await fetch(`https://backend.mixerno.space/api/youtube/estv3/${channelId}`);
                 const data = await response.json();
 
@@ -109,14 +152,13 @@
                     return;
                 }
 
-                const subscriberCount = parseInt(data.items[0].statistics.subscriberCount, 10); // Parses the subscriber count as an integer
-                updateSubscriberCount(subscriberCount); // Updates the displayed count
+                const subscriberCount = parseInt(data.items[0].statistics.subscriberCount, 10);
+                updateSubscriberCount(subscriberCount);
             } catch (error) {
                 console.error('Error fetching subscriber data:', error);
             }
         }
 
-        // Updates the Odometer display with the new subscriber count
         function updateSubscriberCount(count) {
             document.getElementById('subscriber-count').innerText = count;
         }
