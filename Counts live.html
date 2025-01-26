@@ -365,7 +365,7 @@
 
           updateCompareSubscriberCount(subscriberCount1, subscriberCount2);
           clearInterval(intervalId); // Clear any existing intervals for comparison
-          intervalId = setInterval(fetchCompareSubscriberData, 2000); // Set new interval for updating
+          intervalId = setInterval(fetchCompareSubscriberData, 1980); // Set new interval for updating
         } catch (error) {
           console.error("Error fetching subscriber data:", error);
         }
@@ -380,7 +380,7 @@
         document.getElementById("compare-counter").style.display = "block";
       }
 
-      intervalId = setInterval(fetchSubscriberData, 2000);
+      intervalId = setInterval(fetchSubscriberData, 1980)
     </script>
   </body>
 </html>
