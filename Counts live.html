@@ -336,7 +336,7 @@ button:hover {
 
       function displayChannelResults(channels) {
         const resultList = document.getElementById("result-list");
-        resultList.innerHTML = ""; // Clear previous results
+        resultList.innerHTML = ""; 
         channels.forEach((channel) => {
           const channelElement = document.createElement("div");
           channelElement.textContent = channel.snippet.title;
@@ -346,10 +346,10 @@ button:hover {
             fetchSubscriberData();
             document.getElementById("counter").style.display = "block";
             document.getElementById("Bêta").style.display = "block";
-            document.getElementById("search-bar-container").style.display = "none"; // Hide search bar
-            resultList.innerHTML = ""; // Clear results after selection
-            clearInterval(intervalId); // Clear any existing intervals
-            intervalId = setInterval(fetchSubscriberData, 2000); // Set new interval for updating
+            document.getElementById("search-bar-container").style.display = "none"; 
+            resultList.innerHTML = "";
+            clearInterval(intervalId);
+            intervalId = setInterval(fetchSubscriberData, 2000); 
           };
           resultList.appendChild(channelElement);
         });
@@ -451,8 +451,8 @@ button:hover {
           );
 
           updateCompareSubscriberCount(subscriberCount1, subscriberCount2);
-          clearInterval(intervalId); // Clear any existing intervals for comparison
-          intervalId = setInterval(fetchCompareSubscriberData, 2000); // Set new interval for updating
+          clearInterval(intervalId);
+          intervalId = setInterval(fetchCompareSubscriberData, 2000); 
         } catch (error) {
           console.error("Error fetching subscriber data:", error);
         }
