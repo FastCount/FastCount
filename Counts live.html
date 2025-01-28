@@ -346,6 +346,7 @@ button:hover {
             fetchSubscriberData();
             document.getElementById("counter").style.display = "block";
             document.getElementById("Bêta").style.display = "block";
+            document.getElementById("search-bar-container").style.display = "none"; // Hide search bar
             resultList.innerHTML = ""; // Clear results after selection
             clearInterval(intervalId); // Clear any existing intervals
             intervalId = setInterval(fetchSubscriberData, 2000); // Set new interval for updating
