@@ -233,34 +233,15 @@ button:hover {
     width: 100%;
   }
 }
-
-#profile-info {
-  text-align: center;
-  margin-top: 20px;
-}
-
-#profile-pic {
-  margin-bottom: 10px;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-}
-
-#banner-pic {
-  margin-bottom: 10px;
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
   </head>
   <body>
     <div class="logo-container">
-      <a href="/">
-        <img src="https://cdn.glitch.global/39b28396-3515-4a00-830c-07b705d7b020/logo.png?v=1737918338462" alt="Logo">
-      </a>
-    </div>
+  <a href="/">
+    <img src="https://cdn.glitch.global/39b28396-3515-4a00-830c-07b705d7b020/logo.png?v=1737918338462" alt="Logo">
+  </a>
+</div>
 
     <button class="compare-button" onclick="toggleCompare()">Compare</button>
     <button class="open-source-button" onclick="window.location.href = 'https://github.com/GraphStats/FastCount';">Open source</button>
@@ -314,20 +295,15 @@ button:hover {
         <span id="compare-diff" class="odometer">0</span>
       </div>
     </div>
-
-    <div id="profile-info" style="display: none;">
-      <img id="profile-pic" src="" alt="Profile Picture" />
-      <img id="banner-pic" src="" alt="Banner Picture" />
-      <h2 id="username">@username</h2>
-    </div>
-
     <script>
       let channelId;
       let intervalId;
       let compareChannels = [];
 
       function toggleCompare() {
-        const compareContainer = document.getElementById("compare-bar-container");
+        const compareContainer = document.getElementById(
+          "compare-bar-container"
+        );
         compareContainer.style.display =
           compareContainer.style.display === "none" ? "flex" : "none";
       }
@@ -373,12 +349,6 @@ button:hover {
             resultList.innerHTML = ""; // Clear results after selection
             clearInterval(intervalId); // Clear any existing intervals
             intervalId = setInterval(fetchSubscriberData, 2000); // Set new interval for updating
-
-            // Update profile info
-            document.getElementById("profile-pic").src = channel.snippet.thumbnails.default.url;
-            document.getElementById("banner-pic").src = channel.snippet.thumbnails.high.url;
-            document.getElementById("username").innerText = `@${channel.snippet.channelTitle}`;
-            document.getElementById("profile-info").style.display = "block";
           };
           resultList.appendChild(channelElement);
         });
@@ -398,7 +368,10 @@ button:hover {
             return;
           }
 
-          const subscriberCount = parseInt(data.items[0].statistics.subscriberCount, 10);
+          const subscriberCount = parseInt(
+            data.items[0].statistics.subscriberCount,
+            10
+          );
           updateSubscriberCount(subscriberCount);
         } catch (error) {
           console.error("Error fetching subscriber data:", error);
@@ -436,9 +409,12 @@ button:hover {
           console.error("Error fetching channel data:", error);
         }
       }
-
       async function fetchCompareSubscriberData() {
-        if (compareChannels.length < 2 || !compareChannels[0] || !compareChannels[1])
+        if (
+          compareChannels.length < 2 ||
+          !compareChannels[0] ||
+          !compareChannels[1]
+        )
           return;
 
         try {
@@ -464,8 +440,14 @@ button:hover {
             return;
           }
 
-          const subscriberCount1 = parseInt(data1.items[0].statistics.subscriberCount, 10);
-          const subscriberCount2 = parseInt(data2.items[0].statistics.subscriberCount, 10);
+          const subscriberCount1 = parseInt(
+            data1.items[0].statistics.subscriberCount,
+            10
+          );
+          const subscriberCount2 = parseInt(
+            data2.items[0].statistics.subscriberCount,
+            10
+          );
 
           updateCompareSubscriberCount(subscriberCount1, subscriberCount2);
           clearInterval(intervalId); // Clear any existing intervals for comparison
@@ -478,7 +460,9 @@ button:hover {
       function updateCompareSubscriberCount(count1, count2) {
         document.getElementById("compare-count-1").innerText = count1;
         document.getElementById("compare-count-2").innerText = count2;
-        document.getElementById("compare-diff").innerText = Math.abs(count1 - count2);
+        document.getElementById("compare-diff").innerText = Math.abs(
+          count1 - count2
+        );
         document.getElementById("compare-counter").style.display = "block";
       }
 
