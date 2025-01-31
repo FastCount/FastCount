@@ -4,4 +4,4 @@ Thank you very much to PowerDevStats for the collaboration and help with the cod
 
 NOTE: Modify YOUR-API-KEY by your youtube api key from google cloud, if you don't feel like doing this, you can use my site: https://shadow-waiting-sombrero.glitch.me
 
-The phone version is back soon!
+The phone version is back soon! (very soon)
