@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
 app.use(cors({
-  origin: 'https://shadow-waiting-sombrero.glitch.me',
+  origin: 'https://shadow-waiting-sombrero.glitch',
   optionsSuccessStatus: 200
 }));
 
