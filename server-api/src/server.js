@@ -32,8 +32,7 @@ app.get('/api/subscribers/:channelId', async (req, res) => {
       `https://backend.mixerno.space/api/youtube/estv3/${channelId}`
     );
     res.json(response.data);
-  } catch (err
-    or) {
+  } catch (error) {
     res.status(500).json({ error: 'Erreur lors de la récupération des données.' });
   }
 });
