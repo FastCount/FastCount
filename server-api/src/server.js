@@ -11,8 +11,7 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
-app.use(express.static('publ
-  ic'));
+app.use(express.static('public'));
 
 app.get('/api/search', async (req, res) => {
   const { query } = req.query;
