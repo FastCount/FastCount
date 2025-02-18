@@ -37,7 +37,6 @@ app.get('/api/subscribers/:channelId', async (req, res) => {
   }
 });
 
-
 app.listen(PORT, () => {
   console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
 });
