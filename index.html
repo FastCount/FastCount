@@ -20,7 +20,6 @@
             height: 100vh;
             background: radial-gradient(circle, #0a0a2a, #00000f);
             color: #ffffff;
-            font-size: 16px;
             text-align: center;
             overflow: hidden;
         }
@@ -99,16 +98,28 @@
             background: #333;
         }
 
-        #counter {
+        #counter-container {
             display: none;
-            font-size: 4em;
-            font-weight: 900;
+            flex-direction: column;
+            align-items: center;
             margin-top: 20px;
-            animation: shakeZoom 1s infinite alternate;
         }
 
-        .odometer {
-            font-size: 4em;
+        #channel-avatar {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        #channel-name {
+            font-size: 100px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #subscriber-count {
+            font-size: 15em;
             font-weight: 900;
             animation: bounceStretch 2s infinite;
         }
@@ -117,66 +128,30 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        #footer {
-            position: absolute;
-            bottom: 10px;
-            width: 100%;
-            text-align: center;
-            font-size: 14px;
-            color: #ccc;
-        }
-
-        #change-color-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 10px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            background-color: #ff7f00;
-            color: #ffffff;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        #change-color-btn:hover {
-            background-color: #ff9900;
-        }
-
-        #color-picker {
-            display: none;
-            position: absolute;
-            top: 50px;
-            right: 10px;
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
 </head>
 <body>
     <img id="logo" src="https://cdn.glitch.global/39b28396-3515-4a00-830c-07b705d7b020/logo-removebg-preview.png?v=1743440938530" onclick="location.reload()" alt="FastCount Logo">
-    <button id="change-color-btn" onclick="document.getElementById('color-picker').click()">Change Background Color</button>
-    <input type="color" id="color-picker" oninput="changeBackgroundColor(this.value)">
+    
     <div id="search-bar-container">
         <div id="search-bar">
             <input type="text" id="channel-input" placeholder="Enter YouTube channel name" onkeypress="handleKeyPress(event)" />
             <button onclick="fetchChannelData()">Search</button>
         </div>
     </div>
+
     <div id="result-list"></div>
-    <div id="counter">
-        <span id="subscriber-count" class="odometer">0</span>
+
+    <div id="counter-container">
+        <img id="channel-avatar" src="" alt="Channel Avatar">
+        <div id="channel-name"></div>
+        <div id="subscriber-count" class="odometer">0</div>
     </div>
-  </div>
-  <div id="footer">Powered by Statify/Statify LIVE</div>
-</body>
+
     <script>
         let channelId;
         let intervalId;
-
-        function changeBackgroundColor(color) {
-            document.body.style.background = color;
-        }
 
         function handleKeyPress(event) {
             if (event.key === "Enter") {
@@ -217,7 +192,7 @@
                 channelElement.onclick = () => {
                     channelId = channel[2];
                     fetchStatsData();
-                    document.getElementById("counter").style.display = "block";
+                    document.getElementById("counter-container").style.display = "flex";
                     resultList.innerHTML = "";
                     clearInterval(intervalId);
                     intervalId = setInterval(fetchStatsData, 2000);
@@ -231,12 +206,13 @@
                 const response = await fetch(`https://ests.sctools.org/api/get/${channelId}`);
                 if (response.ok) {
                     const data = await response.json();
-                    if (data && data.stats) {
-                        const { estCount } = data.stats;
-                        document.getElementById("subscriber-count").innerText = estCount;
-                        new Odometer({ el: document.getElementById("subscriber-count"), value: estCount }).update(estCount);
-                    } else {
-                        console.error("No stats data available.");
+                    if (data && data.info) {
+                        document.getElementById("channel-avatar").src = data.info.avatar;
+                        document.getElementById("channel-name").textContent = data.info.name;
+                    }
+                    if (data.stats && data.stats.estCount !== undefined) {
+                        document.getElementById("subscriber-count").innerText = data.stats.estCount;
+                        new Odometer({ el: document.getElementById("subscriber-count"), value: data.stats.estCount }).update(data.stats.estCount);
                     }
                 } else {
                     console.error("Failed to fetch stats data: ", response.statusText);
