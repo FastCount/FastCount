@@ -23,7 +23,28 @@
             text-align: center;
             overflow: hidden;
         }
-        #search-bar-container { margin-bottom: 20px; }
+
+        #logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 250px;
+            cursor: pointer;
+        }
+
+        #search-bar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #search-bar {
+            display: flex;
+            gap: 10px;
+        }
+
         input[type="text"] {
             padding: 10px;
             font-size: 18px;
@@ -34,6 +55,7 @@
             width: 300px;
             text-align: center;
         }
+
         button {
             padding: 10px;
             font-size: 18px;
@@ -44,10 +66,93 @@
             cursor: pointer;
             transition: background 0.3s ease;
         }
-        #counter-container { display: none; }
-        #channel-avatar { width: 220px; height: 220px; border-radius: 50%; }
-        #channel-name { font-size: 100px; font-weight: bold; margin-bottom: 10px; }
-        #subscriber-count { font-size: 15em; font-weight: 900; }
+
+        button:hover {
+            background-color: #ff9900;
+        }
+
+        #result-list {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .channel-result {
+            cursor: pointer;
+            background: #222;
+            padding: 15px;
+            border-radius: 10px;
+            transition: transform 0.3s, background 0.3s;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(255, 127, 0, 0.3);
+            opacity: 0;
+            animation: slideIn 0.5s ease-in-out forwards;
+        }
+
+        .channel-result:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: #333;
+        }
+
+        #counter-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #channel-avatar {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        #channel-name {
+            font-size: 100px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #subscriber-count {
+            font-size: 15em;
+            font-weight: 900;
+            animation: bounceStretch 2s infinite;
+        }
+
+        #change-color-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff7f00;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        #change-color-btn:hover {
+            background-color: #ff9900;
+        }
+
+        #color-picker {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 10px;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
 </head>
