@@ -161,10 +161,14 @@
     <button id="change-color-btn" onclick="document.getElementById('color-picker').click()">Change Background Color</button>
     <input type="color" id="color-picker" oninput="changeBackgroundColor(this.value)">
     <div id="search-bar-container">
-        <input type="text" id="channel-input" placeholder="Enter YouTube channel name" onkeypress="handleKeyPress(event)" />
-        <button onclick="fetchChannelData()">Search</button>
+        <div id="search-bar">
+            <input type="text" id="channel-input" placeholder="Enter YouTube channel name" onkeypress="handleKeyPress(event)" />
+            <button onclick="fetchChannelData()">Search</button>
+        </div>
     </div>
+
     <div id="result-list"></div>
+
     <div id="counter-container">
         <img id="channel-avatar" src="" alt="Channel Avatar">
         <div id="channel-name"></div>
@@ -184,7 +188,7 @@
         function changeBackgroundColor(color) {
             document.body.style.background = color;
         }
-        
+
         function handleKeyPress(event) {
             if (event.key === "Enter") {
                 fetchChannelData();
@@ -242,6 +246,15 @@
                 console.error("Error fetching stats data:", error);
             }
         }
+
+        function resetToSearchScreen() {
+    window.location.href = "https://graphstats.github.io/FastCount/";
+}
+        document.getElementById("logo").addEventListener("click", resetToSearchScreen);
+        document.getElementById("change-color-btn").addEventListener("click", function () {
+            const colorPicker = document.getElementById("color-picker");
+            colorPicker.click();
+        });
     </script>
 </body>
 </html>
