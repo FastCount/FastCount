@@ -65,8 +65,7 @@
     <script>
         let channelId;
         window.onload = function () {
-            const pathParts = window.location.pathname.split("/");
-            const possibleChannelId = pathParts[pathParts.length - 1];
+            const possibleChannelId = window.location.hash.substring(1);
             if (possibleChannelId && possibleChannelId.startsWith("UC")) {
                 channelId = possibleChannelId;
                 fetchStatsData();
@@ -104,7 +103,8 @@
                 channelElement.textContent = channel[0];
                 channelElement.classList.add("channel-result");
                 channelElement.onclick = () => {
-                    window.location.href = `/${channel[2]}`;
+                    window.location.hash = `#${channel[2]}`;
+                    location.reload();
                 };
                 resultList.appendChild(channelElement);
             });
