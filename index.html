@@ -215,6 +215,27 @@
         console.error("Error fetching stats data:", error);
     }
 }
+        async function fetchChannelData() {
+            const channelName = document.getElementById("channel-input").value;
+            if (!channelName) {
+                alert("Please enter a channel name.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://mixerno.space/api/youtube-channel-counter/search/${channelName}`);
+                const data = await response.json();
+
+                if (data.list.length === 0) {
+                    alert("Channel not found.");
+                    return;
+                }
+
+                displayChannelResults(data.list);
+            } catch (error) {
+                console.error("Error fetching channel data:", error);
+            }
+        }
         function displayChannelResults(channels) {
             const resultList = document.getElementById("result-list");
             resultList.innerHTML = "";
