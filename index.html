@@ -74,6 +74,10 @@
       text-align: center;
       outline: none;
     }
+    
+    #search-bar:hover {
+      
+    }
 
     button {
       font-family: 'Roboto', sans-serif;
@@ -240,11 +244,20 @@
     <div id="subscriber-count" class="odometer">0</div>
   </div>
 <div id="footer">
-  V5.4.3 (BETA) | Powered by Statify.
+  V5.5.0 (BETA) | Powered by Statify.
 </div>
   
+
+  <div id="theme-toggle" style="position: absolute; bottom: 40px; right: 20px;">
+    <button onclick="toggleTheme()">🌗 Toggle Theme</button>
+  </div>
+
+  <div id="live-visitors" style="position: absolute; bottom: 10px; right: 20px; color: #00fff0; font-size: 0.9em;">
+    👥 Live Visitors: <span id="visitor-count">...</span>
+  </div>
+  
 <div id="notification">
-  FastCount has been updated to version 5.4.3
+  FastCount has been updated to version 5.5.0
 </div>
 
   <button id="only-count-button" onclick="activateOnlyCount()">Only Count</button>
@@ -254,7 +267,6 @@
     let intervalId;
     let odometer;
 (adsbygoogle = window.adsbygoogle || []).push({});
-    // Charger les informations de l'URL au début
     window.addEventListener('load', () => {
       const urlFragment = window.location.hash.slice(1); // Extraire l'ID du canal depuis l'URL
       if (urlFragment) {
@@ -294,6 +306,32 @@
       }
     }
 
+        function toggleVersionLog() {
+      const log = document.getElementById("version-log");
+      log.style.display = log.style.display === "none" ? "block" : "none";
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      if (body.classList.contains("light")) {
+        body.classList.remove("light");
+        body.style.background = "linear-gradient(135deg, #000014, #0f0020)";
+        body.style.color = "#00fff0";
+      } else {
+        body.classList.add("light");
+        body.style.background = "linear-gradient(135deg, #ffffff, #dddddd)";
+        body.style.color = "#000000";
+      }
+    }
+
+    // Simulated live visitor count (for real: use WebSocket, analytics API, etc.)
+    function updateVisitorCount() {
+      const randomVisitors = Math.floor(Math.random() * 2) + 1;
+      document.getElementById("visitor-count").textContent = randomVisitors;
+    }
+    setInterval(updateVisitorCount, 100000);
+    updateVisitorCount();
+    
     function displayChannelResults(channels) {
       const resultList = document.getElementById("result-list");
       resultList.innerHTML = "";
@@ -357,7 +395,7 @@ function activateOnlyCount() {
   document.getElementById("channel-name").style.display = "none";
 
   // Agrandir le compteur
-  document.getElementById("subscriber-count").style.fontSize = "20em";
+  document.getElementById("subscriber-count").style.fontSize = "15em";
   document.getElementById("counter-container").style.alignItems = "flex-start";
   document.getElementById("counter-container").style.marginTop = "80px";
 
@@ -377,6 +415,8 @@ window.addEventListener('load', () => {
   currentUrl.searchParams.set('only-count', 'true');
   window.history.pushState({}, '', currentUrl);  // Mettre à jour l'URL sans recharger la page
 }
+    
+    
   </script>
 </body>
 </html>
