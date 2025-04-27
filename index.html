@@ -12,14 +12,18 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7562628849511682"
      crossorigin="anonymous"></script>
   <meta name="google-adsense-account" content="ca-pub-7562628849511682">
-  <!-- Google Tag Manager -->
-  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-T4X83ZSG');</script>
-  <!-- End Google Tag Manager -->
-  <!-- Google tag (gtag.js) -->
+  <script>
+    (function(w,d,s,l,i){
+      w[l]=w[l]||[];
+      w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});
+      var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+      j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;
+      f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-T4X83ZSG');
+  </script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QMLQLT7FTY"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -103,32 +107,6 @@
       transform: scale(1.05);
     }
 
-    #result-list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 30px;
-      gap: 20px;
-    }
-
-    .channel-result {
-      background: rgba(255, 255, 255, 0.07);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 20px;
-      color: #00fff0;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      min-width: 200px;
-      text-align: center;
-      font-size: 1.2em;
-    }
-
-    .channel-result:hover {
-      transform: scale(1.1);
-    }
-
     #counter-container {
       display: none;
       margin-top: 30px;
@@ -168,12 +146,7 @@
     #only-count-button {
       display: none;
     }
-    
-    .share-button {
-      background: linear-gradient(135deg, #ff00cc, #cc00ff);
-      margin-left: 10px;
-    }
-    
+
     .toast-message {
       position: fixed;
       bottom: 20px;
@@ -186,67 +159,33 @@
       z-index: 1000;
       display: none;
     }
-
-    .button-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
 </head>
 <body>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4X83ZSG"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
   <img id="logo" src="https://cdn.glitch.global/39b28396-3515-4a00-830c-07b705d7b020/logo-removebg-preview.png?v=1743440938530" onclick="window.location.href='/'" alt="FastCount Logo">
-
-  <div id="search-bar-container">
-    <div id="search-bar">
-      <input type="text" id="channel-input" placeholder="Enter YouTube channel name" onkeypress="handleKeyPress(event)" />
-      <button onclick="fetchChannelData()">Search</button>
-    </div>
+  <div id="search-bar">
+    <input type="text" id="channel-input" placeholder="Enter YouTube channel name" onkeypress="handleKeyPress(event)" />
+    <button onclick="fetchChannelData()">Search</button>
   </div>
-  <ins class="adsbygoogle"
-       style="display:block"
-       data-ad-client="ca-pub-7562628849511682"
-       data-ad-slot="2412018290"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
+
   <div id="result-list"></div>
 
   <div id="counter-container">
     <img id="channel-avatar" src="" alt="Channel Avatar">
     <div id="channel-name"></div>
     <div id="subscriber-count" class="odometer">0</div>
-    <div class="loading-spinner" id="loading-spinner"></div>
-    <div class="button-group">
-      <button id="only-count-button" onclick="activateOnlyCount()">Only Count</button>
-      <button class="share-button" onclick="shareCounter()">Share</button>
-    </div>
   </div>
-  
+
   <div id="footer">
     V6.0.1 | Powered by Statify.
   </div>
-
-  <div id="theme-toggle" style="position: absolute; bottom: 40px; right: 20px;">
-    <button onclick="toggleTheme()">🌗 Toggle Theme</button>
-  </div>
-
-  <div id="live-visitors" style="position: absolute; bottom: 10px; right: 20px; color: #00fff0; font-size: 0.9em;">
-    👥 Live Visitors: <span id="visitor-count">...</span>
-  </div>
-  
-  <div class="toast-message" id="toast-message"></div>
 
   <script>
     let channelId;
     let intervalId;
     let odometer;
-    (adsbygoogle = window.adsbygoogle || []).push({});
-    
+
     window.addEventListener('load', () => {
       const urlFragment = window.location.hash.slice(1);
       if (urlFragment) {
@@ -254,13 +193,6 @@
         document.getElementById("counter-container").style.display = "flex";
         fetchStatsData();
         intervalId = setInterval(fetchStatsData, 2000);
-        document.getElementById("only-count-button").style.display = "inline-block";
-      }
-      
-      // Check for only-count parameter
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('only-count') === 'true') {
-        activateOnlyCount();
       }
     });
 
@@ -294,26 +226,6 @@
       }
     }
 
-    function toggleTheme() {
-      const body = document.body;
-      if (body.classList.contains("light")) {
-        body.classList.remove("light");
-        body.style.background = "linear-gradient(135deg, #000014, #0f0020)";
-        body.style.color = "#00fff0";
-      } else {
-        body.classList.add("light");
-        body.style.background = "linear-gradient(135deg, #ffffff, #dddddd)";
-        body.style.color = "#000000";
-      }
-    }
-
-    function updateVisitorCount() {
-      const randomVisitors = Math.floor(Math.random() * 2) + 1;
-      document.getElementById("visitor-count").textContent = randomVisitors;
-    }
-    setInterval(updateVisitorCount, 100000);
-    updateVisitorCount();
-    
     function displayChannelResults(channels) {
       const resultList = document.getElementById("result-list");
       resultList.innerHTML = "";
@@ -324,12 +236,10 @@
         channelElement.onclick = () => {
           const newUrl = `${window.location.origin}/#${channel[2]}`;
           window.history.pushState({}, '', newUrl);
-
           channelId = channel[2];
           document.getElementById("counter-container").style.display = "flex";
           resultList.innerHTML = "";
           clearInterval(intervalId);
-
           if (!odometer) {
             odometer = new Odometer({ 
               el: document.getElementById("subscriber-count"), 
@@ -337,10 +247,8 @@
               format: '(,ddd)'
             });
           }
-
           fetchStatsData();
           intervalId = setInterval(fetchStatsData, 2000);
-          document.getElementById("only-count-button").style.display = "inline-block";
         };
         resultList.appendChild(channelElement);
       });
@@ -351,15 +259,17 @@
       
       try {
         countElement.style.display = "none";
-        
+
         const response = await fetch(`https://ests.sctools.org/api/get/${channelId}`);
         
         if (response.ok) {
           const data = await response.json();
+          
           if (data && data.info) {
             document.getElementById("channel-avatar").src = data.info.avatar;
             document.getElementById("channel-name").textContent = data.info.name;
           }
+
           if (data.stats && typeof data.stats.estCount === "number") {
             if (!odometer) {
               odometer = new Odometer({ 
@@ -375,67 +285,24 @@
           showToast("Failed to update stats. Retrying...");
         }
       } catch (error) {
-        console.error("Error:", error);
-        showToast("Connection error. Retrying...");
-      } finally {
-        countElement.style.display = "block";
+        console.error("Error fetching stats:", error);
+        showToast("Error fetching stats. Retrying...");
       }
+
+      countElement.style.display = "block";
     }
 
-    function activateOnlyCount() {
-      document.getElementById("search-bar-container").style.display = "none";
-      document.getElementById("logo").style.display = "none";
-      document.getElementById("channel-avatar").style.display = "none";
-      document.getElementById("channel-name").style.display = "none";
-      document.getElementById("subscriber-count").style.fontSize = "15em";
-      document.getElementById("counter-container").style.alignItems = "flex-start";
-      document.getElementById("counter-container").style.marginTop = "80px";
-      document.getElementById("only-count-button").style.display = "none";
-      
-      const currentUrl = new URL(window.location.href);
-      currentUrl.searchParams.set('only-count', 'true');
-      window.history.pushState({}, '', currentUrl);
-    }
-    
-    function shareCounter() {
-      const channelName = document.getElementById("channel-name").textContent || "this channel";
-      const shareUrl = `${window.location.origin}/#${channelId}`;
-      
-      if (navigator.share) {
-        navigator.share({
-          title: 'YouTube Subscriber Count',
-          text: `Check out ${channelName}'s live subscriber count!`,
-          url: shareUrl
-        }).catch(err => {
-          copyToClipboard(shareUrl);
-        });
-      } else {
-        copyToClipboard(shareUrl);
-      }
-    }
-    
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        showToast("Link copied to clipboard!");
-      }).catch(err => {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        showToast("Link copied!");
-      });
-    }
-    
-    function showToast(message, duration = 3000) {
-      const toast = document.getElementById("toast-message");
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.classList.add('toast-message');
       toast.textContent = message;
-      toast.style.display = "block";
-      
+      document.body.appendChild(toast);
+      toast.style.display = 'block';
+
       setTimeout(() => {
-        toast.style.display = "none";
-      }, duration);
+        toast.style.display = 'none';
+        document.body.removeChild(toast);
+      }, 3000);
     }
   </script>
 </body>
