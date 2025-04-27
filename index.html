@@ -489,10 +489,11 @@ if (window.location.pathname.startsWith("/counter/")) {
       const shareButton = document.getElementById("share-button");
       const shareOptions = document.getElementById("share-options");
       
-      if (!shareButton.contains(event.target) {
+      if (!shareButton.contains(event.target) && !shareOptions.contains(event.target)) {
         shareOptions.style.display = "none";
-      }
-    });
+      
+    }
+    })
   </script>
 </body>
 </html>
