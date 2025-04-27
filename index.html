@@ -504,6 +504,21 @@ if (window.location.pathname.startsWith("/counter/")) {
       
     }
     })
+
+    function toggleShareOptions() {
+  // Trigger the animation by adding the 'clicked' class
+  const shareButton = document.getElementById("share-button");
+  shareButton.classList.add("clicked");
+
+  // Remove the class after the animation completes so it can be triggered again
+  setTimeout(() => {
+    shareButton.classList.remove("clicked");
+  }, 300);
+
+  // Toggle the visibility of the share options
+  const shareOptions = document.getElementById("share-options");
+  shareOptions.style.display = shareOptions.style.display === "none" ? "block" : "none";
+}
   </script>
 </body>
 </html>
