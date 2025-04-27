@@ -239,6 +239,10 @@
       }
     });
 
+    // Vérifie si on est sur une page de compteur
+if (window.location.pathname.startsWith("/counter/")) {
+}
+
     function handleKeyPress(event) {
       if (event.key === "Enter") {
         fetchChannelData();
