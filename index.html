@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/themes/odometer-theme-default.min.css" />
   <link rel="icon" type="image/png" href="https://cdn.glitch.global/39b28396-3515-4a00-830c-07b705d7b020/F.png?v=1737917930533">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7562628849511682"
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7562628849511682"
      crossorigin="anonymous"></script>
   <meta name="google-adsense-account" content="ca-pub-7562628849511682">
   <!-- Google Tag Manager -->
@@ -178,6 +178,64 @@
     #only-count-button {
       display: none;
     }
+    
+    /* Loading spinner styles */
+    .loader {
+      display: none;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #00fff0;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Share button styles */
+    #share-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #00c0ff, #006666);
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: none;
+    }
+    
+    #share-button:hover {
+      background: linear-gradient(135deg, #00fff0, #008080);
+    }
+    
+    .share-options {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 10px;
+      z-index: 100;
+    }
+    
+    .share-option {
+      padding: 8px 12px;
+      margin: 5px 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    .share-option:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
 </head>
@@ -193,7 +251,15 @@
       <input type="text" id="channel-input" placeholder="Enter YouTube channel name" onkeypress="handleKeyPress(event)" />
       <button onclick="fetchChannelData()">Search</button>
     </div>
+    <div class="loader" id="loader"></div>
   </div>
+  
+  <button id="share-button" onclick="toggleShareOptions()">Share</button>
+  <div class="share-options" id="share-options">
+    <div class="share-option" onclick="shareOnTwitter()">Twitter</div>
+    <div class="share-option" onclick="copyLink()">Copy Link</div>
+  </div>
+  
 <ins class="adsbygoogle"
      style="display:block"
      data-ad-client="ca-pub-7562628849511682"
@@ -233,6 +299,7 @@
       if (urlFragment) {
         channelId = urlFragment;
         document.getElementById("counter-container").style.display = "flex";
+        document.getElementById("share-button").style.display = "block";
         fetchStatsData();
         intervalId = setInterval(fetchStatsData, 2000);
         document.getElementById("only-count-button").style.display = "inline-block"; // Afficher le bouton "Only Count"
@@ -256,10 +323,17 @@ if (window.location.pathname.startsWith("/counter/")) {
         return;
       }
 
+      // Show loader
+      document.getElementById("loader").style.display = "block";
+      document.getElementById("result-list").innerHTML = "";
+      
       try {
         const response = await fetch(`https://mixerno.space/api/youtube-channel-counter/search/${channelName}`);
         const data = await response.json();
 
+        // Hide loader
+        document.getElementById("loader").style.display = "none";
+        
         if (!data.list || data.list.length === 0) {
           alert("Channel not found.");
           return;
@@ -268,10 +342,12 @@ if (window.location.pathname.startsWith("/counter/")) {
         displayChannelResults(data.list);
       } catch (error) {
         console.error("Error fetching channel data:", error);
+        // Hide loader in case of error
+        document.getElementById("loader").style.display = "none";
       }
     }
 
-        function toggleVersionLog() {
+    function toggleVersionLog() {
       const log = document.getElementById("version-log");
       log.style.display = log.style.display === "none" ? "block" : "none";
     }
@@ -311,6 +387,7 @@ if (window.location.pathname.startsWith("/counter/")) {
 
           channelId = channel[2];
           document.getElementById("counter-container").style.display = "flex";
+          document.getElementById("share-button").style.display = "block";
           resultList.innerHTML = "";
           clearInterval(intervalId);
 
@@ -352,36 +429,70 @@ if (window.location.pathname.startsWith("/counter/")) {
       }
     }
 
-function activateOnlyCount() {
-  // Masquer la barre de recherche et le logo
-  document.getElementById("search-bar-container").style.display = "none";
-  document.getElementById("logo").style.display = "none";
-  document.getElementById("channel-avatar").style.display = "none";
-  document.getElementById("channel-name").style.display = "none";
+    function activateOnlyCount() {
+      // Masquer la barre de recherche et le logo
+      document.getElementById("search-bar-container").style.display = "none";
+      document.getElementById("logo").style.display = "none";
+      document.getElementById("channel-avatar").style.display = "none";
+      document.getElementById("channel-name").style.display = "none";
+      document.getElementById("share-button").style.display = "none";
 
-  // Agrandir le compteur
-  document.getElementById("subscriber-count").style.fontSize = "15em";
-  document.getElementById("counter-container").style.alignItems = "flex-start";
-  document.getElementById("counter-container").style.marginTop = "80px";
+      // Agrandir le compteur
+      document.getElementById("subscriber-count").style.fontSize = "15em";
+      document.getElementById("counter-container").style.alignItems = "flex-start";
+      document.getElementById("counter-container").style.marginTop = "80px";
 
-  // Optionnel : Cacher le bouton
-  document.getElementById("only-count-button").style.display = "none";
-  
-// Vérifie si ?only-count=true est dans l'URL au chargement de la page
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('only-count') === 'true') {
-    activateOnlyCount();
-  }
-});
+      // Optionnel : Cacher le bouton
+      document.getElementById("only-count-button").style.display = "none";
+      
+      // Vérifie si ?only-count=true est dans l'URL au chargement de la page
+      window.addEventListener('load', () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('only-count') === 'true') {
+          activateOnlyCount();
+        }
+      });
 
-  // Ajouter ?only-count=true à l'URL
-  const currentUrl = new URL(window.location.href);
-  currentUrl.searchParams.set('only-count', 'true');
-  window.history.pushState({}, '', currentUrl);  // Mettre à jour l'URL sans recharger la page
-}
+      // Ajouter ?only-count=true à l'URL
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('only-count', 'true');
+      window.history.pushState({}, '', currentUrl);  // Mettre à jour l'URL sans recharger la page
+    }
     
+    // Share functions
+    function toggleShareOptions() {
+      const options = document.getElementById("share-options");
+      options.style.display = options.style.display === "block" ? "none" : "block";
+    }
     
+    function shareOnTwitter() {
+      const channelName = document.getElementById("channel-name").textContent || "YouTube channel";
+      const count = document.getElementById("subscriber-count").textContent || "0";
+      const text = `Check out ${channelName}'s subscriber count: ${count} on FastCount!`;
+      const url = window.location.href;
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+      document.getElementById("share-options").style.display = "none";
+    }
+    
+    function copyLink() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        alert("Link copied to clipboard!");
+        document.getElementById("share-options").style.display = "none";
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
+    
+    // Close share options when clicking outside
+    document.addEventListener('click', function(event) {
+      const shareButton = document.getElementById("share-button");
+      const shareOptions = document.getElementById("share-options");
+      
+      if (!shareButton.contains(event.target) {
+        shareOptions.style.display = "none";
+      }
+    });
   </script>
 </body>
 </html>
