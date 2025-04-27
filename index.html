@@ -246,6 +246,45 @@
     #share-button.clicked {
      animation: buttonClickAnimation 0.3s ease-in-out;
     }
+
+    /* Ajout de l'animation pour l'élément de menu de partage */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Modification de la classe .share-options pour appliquer l'animation */
+.share-options {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 10px;
+  z-index: 100;
+  animation: slideIn 0.5s ease-out forwards;
+}
+
+.share-option {
+  padding: 8px 12px;
+  margin: 5px 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.share-option:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
 </head>
@@ -504,6 +543,18 @@ if (window.location.pathname.startsWith("/counter/")) {
       
     }
     })
+
+    function toggleShareOptions() {
+  const shareOptions = document.getElementById('share-options');
+  
+  // Vérifie si le menu de partage est déjà visible
+  if (shareOptions.style.display === "none" || shareOptions.style.display === "") {
+    shareOptions.style.display = "block";  // Affiche le menu
+  } else {
+    shareOptions.style.display = "none";  // Cache le menu
+  }
+}
+
   </script>
 </body>
 </html>
