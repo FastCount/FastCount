@@ -350,7 +350,6 @@
       const countElement = document.getElementById("subscriber-count");
       
       try {
-        spinner.style.display = "block";
         countElement.style.display = "none";
         
         const response = await fetch(`https://ests.sctools.org/api/get/${channelId}`);
