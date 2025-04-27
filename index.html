@@ -168,22 +168,6 @@
     #only-count-button {
       display: none;
     }
-
-    .loading-spinner {
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top: 4px solid #00fff0;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-      display: none;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
     
     .share-button {
       background: linear-gradient(135deg, #ff00cc, #cc00ff);
@@ -212,6 +196,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
 </head>
 <body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4X83ZSG"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
   <img id="logo" src="https://cdn.glitch.global/39b28396-3515-4a00-830c-07b705d7b020/logo-removebg-preview.png?v=1743440938530" onclick="window.location.href='/'" alt="FastCount Logo">
 
   <div id="search-bar-container">
@@ -220,7 +208,12 @@
       <button onclick="fetchChannelData()">Search</button>
     </div>
   </div>
-
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-7562628849511682"
+       data-ad-slot="2412018290"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
   <div id="result-list"></div>
 
   <div id="counter-container">
@@ -239,105 +232,213 @@
   </div>
 
   <div id="theme-toggle" style="position: absolute; bottom: 40px; right: 20px;">
-    <button onclick="toggleTheme()">Toggle Dark Mode</button>
+    <button onclick="toggleTheme()">🌗 Toggle Theme</button>
   </div>
 
-  <div id="toast-message" class="toast-message"></div>
+  <div id="live-visitors" style="position: absolute; bottom: 10px; right: 20px; color: #00fff0; font-size: 0.9em;">
+    👥 Live Visitors: <span id="visitor-count">...</span>
+  </div>
+  
+  <div class="toast-message" id="toast-message"></div>
 
   <script>
     let channelId;
     let intervalId;
     let odometer;
-    let isFirstRequest = true; // Ajout d'un état pour vérifier la première requête
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    
+    window.addEventListener('load', () => {
+      const urlFragment = window.location.hash.slice(1);
+      if (urlFragment) {
+        channelId = urlFragment;
+        document.getElementById("counter-container").style.display = "flex";
+        fetchStatsData();
+        intervalId = setInterval(fetchStatsData, 2000);
+        document.getElementById("only-count-button").style.display = "inline-block";
+      }
+      
+      // Check for only-count parameter
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('only-count') === 'true') {
+        activateOnlyCount();
+      }
+    });
 
-    // Function to handle key press for the search
     function handleKeyPress(event) {
       if (event.key === "Enter") {
         fetchChannelData();
       }
     }
 
-    // Fetching the channel data
     async function fetchChannelData() {
-      const searchInput = document.getElementById("channel-input").value.trim();
-      if (searchInput === "") return;
-      
-      const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${searchInput}&type=channel&key=YOUR_API_KEY`);
-      const data = await response.json();
-      
-      const channel = data.items[0];
-      if (channel) {
-        channelId = channel.id.channelId;
-        displayChannelInfo(channel.snippet);
-        fetchStatsData();
-        intervalId = setInterval(fetchStatsData, 2000);
-        document.getElementById("counter-container").style.display = "flex";
+      const channelName = document.getElementById("channel-input").value;
+      if (!channelName) {
+        showToast("Please enter a channel name");
+        return;
+      }
+
+      try {
+        showToast("Searching...");
+        const response = await fetch(`https://mixerno.space/api/youtube-channel-counter/search/${channelName}`);
+        const data = await response.json();
+
+        if (!data.list || data.list.length === 0) {
+          showToast("Channel not found");
+          return;
+        }
+
+        displayChannelResults(data.list);
+      } catch (error) {
+        console.error("Error:", error);
+        showToast("Connection error. Please try again");
       }
     }
 
-    // Display channel info
-    function displayChannelInfo(snippet) {
-      document.getElementById("channel-avatar").src = snippet.thumbnails.high.url;
-      document.getElementById("channel-name").textContent = snippet.title;
+    function toggleTheme() {
+      const body = document.body;
+      if (body.classList.contains("light")) {
+        body.classList.remove("light");
+        body.style.background = "linear-gradient(135deg, #000014, #0f0020)";
+        body.style.color = "#00fff0";
+      } else {
+        body.classList.add("light");
+        body.style.background = "linear-gradient(135deg, #ffffff, #dddddd)";
+        body.style.color = "#000000";
+      }
+    }
+
+    function updateVisitorCount() {
+      const randomVisitors = Math.floor(Math.random() * 2) + 1;
+      document.getElementById("visitor-count").textContent = randomVisitors;
+    }
+    setInterval(updateVisitorCount, 100000);
+    updateVisitorCount();
+    
+    function displayChannelResults(channels) {
+      const resultList = document.getElementById("result-list");
+      resultList.innerHTML = "";
+      channels.forEach((channel) => {
+        const channelElement = document.createElement("div");
+        channelElement.textContent = channel[0];
+        channelElement.classList.add("channel-result");
+        channelElement.onclick = () => {
+          const newUrl = `${window.location.origin}/#${channel[2]}`;
+          window.history.pushState({}, '', newUrl);
+
+          channelId = channel[2];
+          document.getElementById("counter-container").style.display = "flex";
+          resultList.innerHTML = "";
+          clearInterval(intervalId);
+
+          if (!odometer) {
+            odometer = new Odometer({ 
+              el: document.getElementById("subscriber-count"), 
+              value: 0,
+              format: '(,ddd)'
+            });
+          }
+
+          fetchStatsData();
+          intervalId = setInterval(fetchStatsData, 2000);
+          document.getElementById("only-count-button").style.display = "inline-block";
+        };
+        resultList.appendChild(channelElement);
+      });
     }
 
     async function fetchStatsData() {
       const spinner = document.getElementById("loading-spinner");
       const countElement = document.getElementById("subscriber-count");
-
+      
       try {
-        // Afficher le spinner seulement si c'est la première requête
-        if (isFirstRequest) {
-          spinner.style.display = "block";
-          countElement.style.display = "none";
-        }
-
+        spinner.style.display = "block";
+        countElement.style.display = "none";
+        
         const response = await fetch(`https://ests.sctools.org/api/get/${channelId}`);
-        const data = await response.json();
-
-        if (!data.subscriberCount) {
-          showToast("Erreur de récupération des données.");
-          return;
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.info) {
+            document.getElementById("channel-avatar").src = data.info.avatar;
+            document.getElementById("channel-name").textContent = data.info.name;
+          }
+          if (data.stats && typeof data.stats.estCount === "number") {
+            if (!odometer) {
+              odometer = new Odometer({ 
+                el: countElement, 
+                value: data.stats.estCount,
+                format: '(,ddd)'
+              });
+            } else {
+              odometer.update(data.stats.estCount);
+            }
+          }
+        } else {
+          showToast("Failed to update stats. Retrying...");
         }
-
-        // Mettre à jour l'odomètre avec la nouvelle valeur
-        if (odometer) {
-          odometer.update(data.subscriberCount);
-        }
-
-        // Cacher le spinner après la première requête
-        if (isFirstRequest) {
-          spinner.style.display = "none";
-          countElement.style.display = "block";
-          isFirstRequest = false; // Marquer que la première requête est terminée
-        }
-
       } catch (error) {
-        console.error("Erreur:", error);
-        showToast("Erreur de connexion. Veuillez réessayer.");
+        console.error("Error:", error);
+        showToast("Connection error. Retrying...");
+      } finally {
+        spinner.style.display = "none";
+        countElement.style.display = "block";
       }
     }
 
-    function showToast(message) {
-      const toastMessage = document.getElementById("toast-message");
-      toastMessage.textContent = message;
-      toastMessage.style.display = "block";
-      setTimeout(() => toastMessage.style.display = "none", 3000);
-    }
-
-    // Activate only count mode
     function activateOnlyCount() {
-      // Code for only count mode here
+      document.getElementById("search-bar-container").style.display = "none";
+      document.getElementById("logo").style.display = "none";
+      document.getElementById("channel-avatar").style.display = "none";
+      document.getElementById("channel-name").style.display = "none";
+      document.getElementById("subscriber-count").style.fontSize = "15em";
+      document.getElementById("counter-container").style.alignItems = "flex-start";
+      document.getElementById("counter-container").style.marginTop = "80px";
+      document.getElementById("only-count-button").style.display = "none";
+      
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('only-count', 'true');
+      window.history.pushState({}, '', currentUrl);
     }
-
-    // Share counter function
+    
     function shareCounter() {
-      // Code for sharing counter here
+      const channelName = document.getElementById("channel-name").textContent || "this channel";
+      const shareUrl = `${window.location.origin}/#${channelId}`;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: 'YouTube Subscriber Count',
+          text: `Check out ${channelName}'s live subscriber count!`,
+          url: shareUrl
+        }).catch(err => {
+          copyToClipboard(shareUrl);
+        });
+      } else {
+        copyToClipboard(shareUrl);
+      }
     }
-
-    // Toggle theme function
-    function toggleTheme() {
-      // Code for toggling dark mode here
+    
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Link copied to clipboard!");
+      }).catch(err => {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast("Link copied!");
+      });
+    }
+    
+    function showToast(message, duration = 3000) {
+      const toast = document.getElementById("toast-message");
+      toast.textContent = message;
+      toast.style.display = "block";
+      
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, duration);
     }
   </script>
 </body>
