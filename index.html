@@ -84,6 +84,52 @@
       text-align: center;
     }
 
+    .favorites-container, .history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.fav-item, .hist-item {
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.3s;
+}
+
+.fav-item:hover, .hist-item:hover {
+    background: #e0e0e0;
+}
+
+.fav-avatar, .hist-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.fav-name, .hist-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.fav-remove {
+    background: none;
+    border: none;
+    color: red;
+    font-size: 18px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
     button {
       padding: 15px 30px;
       border: none;
@@ -293,7 +339,12 @@
     </div>
     <div class="loader" id="loader"></div>
   </div>
-  
+  <h2>Favorites</h2>
+<div id="favorites-list" class="favorites-container"></div>
+
+<h2>History</h2>
+<div id="history-list" class="history-container"></div>
+
   <button id="share-button" onclick="toggleShareOptions()">Share</button>
   <div class="share-options" id="share-options">
     <div class="share-option" onclick="shareOnTwitter()">Twitter</div>
@@ -437,6 +488,106 @@ if (window.location.pathname.startsWith("/counter/")) {
         resultList.appendChild(channelElement);
       });
     }
+
+    // FAVORITES AND HISTORY SYSTEM
+
+// Load favorites and history from localStorage
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+let history = JSON.parse(localStorage.getItem('history')) || [];
+
+// Save favorites to localStorage
+function saveFavorites() {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+// Save history to localStorage
+function saveHistory() {
+    localStorage.setItem('history', JSON.stringify(history));
+}
+
+// Add a channel to favorites
+function addFavorite(channel) {
+    if (!favorites.find(fav => fav.id === channel.id)) {
+        favorites.push(channel);
+        saveFavorites();
+        displayFavorites();
+    }
+}
+
+// Remove a channel from favorites
+function removeFavorite(channelId) {
+    favorites = favorites.filter(fav => fav.id !== channelId);
+    saveFavorites();
+    displayFavorites();
+}
+
+// Add a channel to history
+function addToHistory(channel) {
+    // Remove if already exists
+    history = history.filter(hist => hist.id !== channel.id);
+    // Add to top
+    history.unshift(channel);
+    // Limit history to 20 items
+    history = history.slice(0, 20);
+    saveHistory();
+    displayHistory();
+}
+
+// Display favorites
+function displayFavorites() {
+    const favContainer = document.getElementById('favorites-list');
+    if (!favContainer) return;
+
+    favContainer.innerHTML = '';
+
+    favorites.forEach(channel => {
+        const div = document.createElement('div');
+        div.className = 'fav-item';
+        div.innerHTML = `
+            <img src="${channel.avatar}" alt="Avatar" class="fav-avatar">
+            <span class="fav-name">${channel.name}</span>
+            <button class="fav-remove" onclick="removeFavorite('${channel.id}')">✖</button>
+        `;
+        div.onclick = () => {
+            // Navigate to the channel counter (replace this with your navigation function)
+            openChannelCounter(channel.id);
+        };
+        favContainer.appendChild(div);
+    });
+}
+
+// Display history
+function displayHistory() {
+    const histContainer = document.getElementById('history-list');
+    if (!histContainer) return;
+
+    histContainer.innerHTML = '';
+
+    history.forEach(channel => {
+        const div = document.createElement('div');
+        div.className = 'hist-item';
+        div.innerHTML = `
+            <img src="${channel.avatar}" alt="Avatar" class="hist-avatar">
+            <span class="hist-name">${channel.name}</span>
+        `;
+        div.onclick = () => {
+            openChannelCounter(channel.id);
+        };
+        histContainer.appendChild(div);
+    });
+}
+
+// Dummy function to simulate navigation
+function openChannelCounter(channelId) {
+    console.log('Navigate to channel:', channelId);
+    // Replace with your own function to show a counter
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    displayFavorites();
+    displayHistory();
+});
 
     async function fetchStatsData() {
   try {
