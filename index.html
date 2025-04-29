@@ -546,6 +546,11 @@ function setChannelTitle(channelName) {
     document.title = "FastCount";
   }
 }
+document.title = "FastCount - " + channelTitle;
+function displayChannelInfo(channel) {
+  document.getElementById("channel-name").textContent = channel.snippet.title;
+  document.title = "FastCount - " + channel.snippet.title;
+}
 
   </script>
 </body>
