@@ -553,6 +553,13 @@ function displayChannelInfo(channel) {
 }
 
 document.title = `${data.author} - Live Sub Count`;
+
+app.get ('/counter/:channelId', (req, res) => {
+  const channelId = req.params.channelId;
+  const channelName = req.query.channelName || 'YouTube Channel';
+  const channelTitle = req.query.channelTitle || 'FastCount';
+  res.render('counter', { channelId, channelName, channelTitle });
+});
     </script>
   </body>
 </html>
