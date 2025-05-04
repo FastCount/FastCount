@@ -430,7 +430,7 @@ if (window.location.pathname.startsWith("/counter/")) {
           }
 
           fetchStatsData();
-          intervalId = setInterval(fetchStatsData, 2000);
+          intervalId = setInterval(fetchStatsData, 0);
 
           document.getElementById("only-count-button").style.display = "inline-block";
         };
