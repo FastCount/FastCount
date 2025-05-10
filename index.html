@@ -266,6 +266,17 @@
   animation: slideIn 0.3s ease-out forwards;
 }
 
+/* À mettre dans une balise <style> dans ton <head> */
+#main-content {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+#main-content.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .share-option {
   padding: 8px 12px;
   margin: 5px 0;
@@ -345,7 +356,12 @@
     const input = document.getElementById("password-input").value;
     if (allowedPasswords.includes(input)) {
       document.getElementById("password-screen").style.display = "none";
-      document.getElementById("main-content").style.display = "block";
+const mainContent = document.getElementById("main-content");
+mainContent.style.display = "block";
+setTimeout(() => {
+  mainContent.classList.add("visible");
+}, 50); // on attend un peu pour que l'effet fonctionne
+
     } else {
       document.getElementById("error-msg").innerText = "Incorrect password.";
     }
