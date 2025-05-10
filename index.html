@@ -350,22 +350,44 @@
   <button id="only-count-button" onclick="activateOnlyCount()">Only Count</button>
 
   <script>
-      const allowedPasswords = ["statifyfastadmin", "userhudiscord0001"]; // Add as many passwords as you want
+    const allowedPasswords = ['statifyrootfast']; // Remplacez avec vos mots de passe autorisés
 
-  function checkPassword() {
-    const input = document.getElementById("password-input").value;
-    if (allowedPasswords.includes(input)) {
-      document.getElementById("password-screen").style.display = "none";
-const mainContent = document.getElementById("main-content");
-mainContent.style.display = "block";
-setTimeout(() => {
-  mainContent.classList.add("visible");
-}, 50); // on attend un peu pour que l'effet fonctionne
+    // Vérifie si le mot de passe est correct
+    function checkPassword() {
+      const password = document.getElementById('password-input').value;
+      const now = new Date().getTime();
 
-    } else {
-      document.getElementById("error-msg").innerText = "Incorrect password.";
+      if (allowedPasswords.includes(password)) {
+        localStorage.setItem('passwordValidated', now);
+        localStorage.setItem('passwordStatus', 'valid');
+        hidePasswordScreen();
+      } else {
+        document.getElementById('error-msg').innerText = 'Incorrect password. Please try again.';
+      }
     }
-  }
+
+    // Masque l'écran du mot de passe si déjà validé
+    function hidePasswordScreen() {
+      document.getElementById('password-screen').style.display = 'none';
+    }
+
+    // Vérifie l'état du mot de passe à chaque chargement
+    function checkPasswordStatus() {
+      const passwordStatus = localStorage.getItem('passwordStatus');
+      const passwordValidatedTime = parseInt(localStorage.getItem('passwordValidated'));
+
+      if (passwordStatus === 'valid' && passwordValidatedTime) {
+        const now = new Date().getTime();
+        if (now - passwordValidatedTime < 3600000) {
+          hidePasswordScreen();
+        }
+      }
+    }
+
+    // Appeler la fonction au chargement de la page
+    window.onload = function () {
+      checkPasswordStatus();
+    };
     let channelId;
     let intervalId;
     let odometer;
